@@ -1,0 +1,37 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    ports:
+      - "8085:8080"
+      
+    # this is the volume that will be mounted to the container. 
+    # In other words, the files in the host machine will be available in the container in real-time.
+    volumes:
+      - .:/var/www/html
+      
+    environment:
+      - CI_ENVIRONMENT=development
+      - DB_HOST=db
+      - DB_USER=myuser
+      - DB_PASSWORD=mypassword
+      - DB_NAME=myapp
+    depends_on:
+      - db
+  db:
+    image: mysql:8.0
+    ports:
+      - "3311:3306"
+    environment:
+      - MYSQL_DATABASE=myapp
+      - MYSQL_USER=myuser
+      - MYSQL_PASSWORD=mypassword
+      - MYSQL_ROOT_PASSWORD=rootpassword
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+volumes:
+  mysql_data:
